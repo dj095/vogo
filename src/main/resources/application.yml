@@ -1,0 +1,62 @@
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,text/css,application/javascript
+    min-response-size: 1024
+  port: 9020
+  startupDelayInMs: 60000
+
+job:
+  thread_pool_size: 10
+
+custom:
+  async:
+    core-pool-size: 300
+    max-pool-size: 500
+    keep-alive-seconds: 100
+  rest:
+    connection:
+      connect-timeout: 2000
+      connection-request-timeout: 2000
+      socket-timeout: 20000
+      max-total: 2000
+      default-max-per-route: 500
+
+app:
+
+database:
+
+  # KALAARI DB CONFIG
+  kalaari:
+    datasource:
+      driverClassName: org.postgresql.Driver
+      url: # TODO: ADD PROD URL HERE
+      username: root
+      password: root
+      dialect: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
+      validationQuery: SELECT 1
+      testOnBorrow: true
+    jpa:
+      hibernate:
+        ddl-auto: none
+        show-sql: true
+
+logging:
+  file: /var/log/kalaari/kalaari.log
+  level:
+    com:
+      kalaari: TRACE
+    org:
+      hibernate: INFO
+      springframework:
+        web: INFO
+        web.filter.CommonsRequestLoggingFilter: DEBUG
+      apache:
+        http: INFO
+        kafka: INFO
+  pattern:
+    level: '[requestId:%X{requestId}] %5p'
+
+spring:
+  application:
+    name: "kalaari"
