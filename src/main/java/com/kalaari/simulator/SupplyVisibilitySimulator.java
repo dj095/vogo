@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,11 @@ public class SupplyVisibilitySimulator {
     private DemandCenterService demandCenterService;
 
     private Map<Long, Long> demandCenterIdToSupply;
+
+    @PostConstruct
+    public void postConstruct() {
+        reset();
+    }
 
     public SimulationOutput simulate(SimulatorInput simulatorInput, Long customerId) throws KalaariException {
         SimulationOutput simulationOutput = new SimulationOutput();
