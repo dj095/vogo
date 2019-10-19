@@ -36,11 +36,12 @@ public class MatchmakingService {
                 Long toDc = lanePreference.getToDemandCenter();
                 Integer weight = lanePreference.getWeight();
 
-                for (DemandCenterPrediction demandCenterPrediction : demandCenterPredictions) {
-                    demandCenterPrediction.getIdleWaitMins();
-                }
             }
         }
         return allocatedVehicles;
+    }
+
+    public List<Vehicle> allocateVehices() {
+        return null;
     }
 }
