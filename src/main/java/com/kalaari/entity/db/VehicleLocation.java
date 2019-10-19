@@ -32,4 +32,6 @@ public class VehicleLocation extends BaseEntity<Long> {
     @Column(name = "lng")
     private Double lng;
 
+    @Column(name = "p_timestamp")
+    private Date pTimestamp;
 }

@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = { "com.kalaari.repository.base" },
+@EnableJpaRepositories(basePackages = { "com.kalaari.repository" },
         entityManagerFactoryRef = KalaariDbConfiguration.EntityManagerFactoryBeanName,
         transactionManagerRef = KalaariDbConfiguration.TransactionManagerBeanName)
 public class KalaariDbConfiguration {

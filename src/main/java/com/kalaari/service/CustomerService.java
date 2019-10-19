@@ -24,7 +24,7 @@ public class CustomerService {
                 demandCenterId);
     }
 
-    public Customer getCustomerById() {
-        return null;
+    public Customer getCustomerById(Long customerId) {
+        return customerRepository.findOne(customerId);
     }
 }

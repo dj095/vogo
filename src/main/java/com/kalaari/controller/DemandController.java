@@ -1,5 +1,6 @@
 package com.kalaari.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -34,7 +35,8 @@ public class DemandController {
     @GetMapping(value = "/get_vehicles")
     @ResponseBody
     public List<Vehicle> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId,
-            @NotNull @RequestParam(value = "demand_center_id") Long demandCenterId) throws KalaariException {
-        return matchmakingService.getVehicles(customerId, demandCenterId);
+            @NotNull @RequestParam(value = "demand_center_id") Long demandCenterId,
+            @NotNull @RequestParam(value = "time_of_request") Date timeOfRequest) throws KalaariException {
+        return matchmakingService.getVehicles(customerId, demandCenterId, timeOfRequest);
     }
 }

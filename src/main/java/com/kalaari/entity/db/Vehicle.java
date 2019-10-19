@@ -20,7 +20,4 @@ public class Vehicle extends BaseEntity<Long> {
 
     @Column(name = "registrationNumber")
     private String registrationNumber;
-
-    @Column(name = "chasisNumber")
-    private String chasisNumber;
 }
