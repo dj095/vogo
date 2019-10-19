@@ -187,7 +187,8 @@ public class SimulationDataGenerationService {
     }
 
     private SimulationGeneratorRequest mockRequest() {
-        String requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 10,\"supply_count\": 12},{\"dc_id\": 2,\"count\": 5,\"supply_count\": 7},{\"dc_id\": 3,\"count\": 7,\"supply_count\": 10},{\"dc_id\": 4,\"count\": 3,\"supply_count\": 5}]}";
+//        String requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 10,\"supply_count\": 12},{\"dc_id\": 2,\"count\": 5,\"supply_count\": 7},{\"dc_id\": 3,\"count\": 7,\"supply_count\": 10},{\"dc_id\": 4,\"count\": 3,\"supply_count\": 5}]}";
+        String requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 1,\"supply_count\": 12},{\"dc_id\": 2,\"count\": 1,\"supply_count\": 7},{\"dc_id\": 3,\"count\": 1,\"supply_count\": 10}]}";
         try {
             return objectMapper.readValue(requestString, SimulationGeneratorRequest.class);
         } catch (Exception ex) {
