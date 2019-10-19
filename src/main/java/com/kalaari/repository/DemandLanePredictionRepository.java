@@ -14,4 +14,6 @@ public interface DemandLanePredictionRepository extends CrudRepository<DemandLan
             Long toDcId);
 
     List<DemandLanePrediction> findAllByOrderByEstimatedDemandDesc();
+
+    DemandLanePrediction findTopByFromDemandCenterIdAndToDemandCenterIdOrderByEstimatedDemandDesc(Long from, Long to);
 }

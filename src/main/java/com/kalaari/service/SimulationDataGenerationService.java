@@ -106,7 +106,10 @@ public class SimulationDataGenerationService {
             DemandCenter demandCenter = demandCenterMap.get(simulationGeneratorRequestEntity.getDcId());
             demandCenter.setNoOfVehicles(simulationGeneratorRequestEntity.getSupplyCount());
             createVehicles(demandCenter);
-            demandCenter = demandCenterRepository.save(demandCenter);
+            DemandCenter demandCenterExisting = demandCenterRepository.findByName(demandCenter.getName());
+            if (demandCenterExisting != null) {
+                demandCenter = demandCenterRepository.save(demandCenter);
+            }
             demandCenterList.add(demandCenter);
             createDemandCentrePredictionData(demandCenter);
         }
@@ -116,7 +119,10 @@ public class SimulationDataGenerationService {
     private void createVehicles(DemandCenter demandCenter) {
         for (int i = 0 ; i < demandCenter.getNoOfVehicles() ; i++) {
             String registrationNumber = "KA" + demandCenter.getName().toUpperCase().substring(0, 4) + String.valueOf(i+1);
-            VehicleLocation vehicleLocation = new VehicleLocation(registrationNumber, new Date(), demandCenter.getLat(), demandCenter.getLng(), null);
+            VehicleLocation vehicleLocation = vehicleLocationRepository.findByVehicleNumber(registrationNumber);
+            if (vehicleLocation != null)
+                continue;
+            vehicleLocation = new VehicleLocation(registrationNumber, new Date(), demandCenter.getLat(), demandCenter.getLng(), null);
             vehicleLocationRepository.save(vehicleLocation);
         }
     }
@@ -127,7 +133,10 @@ public class SimulationDataGenerationService {
         idleWaitMinsMap.put("Marathahalli", 30L);
         idleWaitMinsMap.put("Sarjapur", 40L);
         idleWaitMinsMap.put("Electronic City", 60L);
-        DemandCenterPrediction demandCenterPrediction = new DemandCenterPrediction(demandCenter.getId(),
+        DemandCenterPrediction demandCenterPrediction = demandCenterPredictionRepository.findByDemandCenterIdOrderByIdleWaitMins(demandCenter.getId());
+        if (demandCenterPrediction != null)
+            return;
+        demandCenterPrediction = new DemandCenterPrediction(demandCenter.getId(),
                 null, null, idleWaitMinsMap.get(demandCenter.getName()));
         demandCenterPredictionRepository.save(demandCenterPrediction);
     }
@@ -160,7 +169,11 @@ public class SimulationDataGenerationService {
             for (DemandCenter toDemandCenter : demandCenterList) {
                 if (fromDemandCenter.equals(toDemandCenter))
                     continue;
-                DemandLanePrediction demandLanePrediction = new DemandLanePrediction(fromDemandCenter.getId(),
+                DemandLanePrediction demandLanePrediction = demandLanePredictionRepository
+                        .findTopByFromDemandCenterIdAndToDemandCenterIdOrderByEstimatedDemandDesc(fromDemandCenter.getId(), toDemandCenter.getId());
+                if (demandLanePrediction != null)
+                    continue;
+                demandLanePrediction = new DemandLanePrediction(fromDemandCenter.getId(),
                         toDemandCenter.getId(), null, null, estimatedDemandMap.get(fromDemandCenter.getName()).get(toDemandCenter.getName()),
                         null);
                 demandLanePredictionRepository.save(demandLanePrediction);

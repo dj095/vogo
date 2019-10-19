@@ -15,4 +15,6 @@ public interface DemandCenterRepository extends CrudRepository<DemandCenter, Lon
     DemandCenter getNearestDemandCenter(@Param("request_lat") Double lat, @Param("request_lng") Double lng);
 
     DemandCenter findById(Long id);
+
+    DemandCenter findByName(String name);
 }

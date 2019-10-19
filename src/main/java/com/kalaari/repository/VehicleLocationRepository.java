@@ -19,4 +19,6 @@ public interface VehicleLocationRepository extends CrudRepository<VehicleLocatio
 
     @Query(value = "select * from vehicle_location", nativeQuery = true)
     List<VehicleLocation> getAllVehiclesAroundTime();
+
+    VehicleLocation findByVehicleNumber(String vehicleNumber);
 }
