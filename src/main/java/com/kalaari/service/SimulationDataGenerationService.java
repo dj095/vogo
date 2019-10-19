@@ -72,7 +72,7 @@ public class SimulationDataGenerationService {
             if (!dcIdToCountMap.containsKey(dcId))
                 continue;
             if (dcIdToCountMap.get(dcId) > 0) {
-                Integer toIndex = (generateRandomNumber(numDc - 1)) % numDc;
+                Integer toIndex = (numDc + (generateRandomNumber(numDc - 1))) % numDc;
                 Long toDcId = dcIdList.get(toIndex);
 
                 Customer customer = new Customer(customerId.toString(), 3D, demandCenter.getLat(),
