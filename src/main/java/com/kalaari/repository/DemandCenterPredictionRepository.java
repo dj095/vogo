@@ -11,6 +11,9 @@ import com.kalaari.entity.db.DemandCenterPrediction;
 @Repository
 public interface DemandCenterPredictionRepository extends CrudRepository<DemandCenterPrediction, Long> {
 
-    List<DemandCenterPrediction> findAllByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMinsDesc(Time fromTimeLessThan,
+    List<DemandCenterPrediction> findTop10ByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMins(
+            Time fromTimeLessThan, Time toTimeGreaterThan);
+
+    List<DemandCenterPrediction> findAllByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMins(Time fromTimeLessThan,
             Time toTimeGreaterThan);
 }

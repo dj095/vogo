@@ -1,23 +1,28 @@
 package com.kalaari.service;
 
-import java.util.Date;
+import java.sql.Time;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kalaari.entity.db.Vehicle;
-import com.kalaari.repository.VehicleRepository;
+import com.kalaari.entity.db.VehicleLocation;
+import com.kalaari.repository.VehicleLocationRepository;
 
 @Service
 public class VehicleService {
 
     @Autowired
-    private VehicleRepository vehicleRepository;
+    private VehicleLocationRepository vehicleLocationRepository;
 
-    public List<Vehicle> getAllNearbyVehiclesAroundTime(Double lat, Double lng, Date timeOfRequest) {
-        return vehicleRepository.getAllNearbyVehiclesAroundTime(lat, lng, timeOfRequest,
-                new DateTime(timeOfRequest).plusHours(1).toDate());
+    public List<VehicleLocation> getAllNearbyVehiclesAroundTime(Double lat, Double lng, Time timeOfRequest) {
+        return vehicleLocationRepository.getAllNearbyVehiclesAroundTime(lat, lng, timeOfRequest,
+                new Time(new DateTime(timeOfRequest).plusHours(1).getMillis()));
+    }
+
+    public List<VehicleLocation> getVehiclesAroundTime(Time timeOfRequest) {
+        return vehicleLocationRepository.getAllVehiclesAroundTime(timeOfRequest,
+                new Time(new DateTime(timeOfRequest).plusHours(1).getMillis()));
     }
 }

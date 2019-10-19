@@ -1,5 +1,6 @@
 package com.kalaari.entity.db;
 
+import java.sql.Time;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -20,8 +21,8 @@ import lombok.NoArgsConstructor;
 @Where(clause = "deleted=false")
 public class VehicleLocation extends BaseEntity<Long> {
 
-    @Column(name = "vehicle_id")
-    private Long vehicleId;
+    @Column(name = "vehicle_number")
+    private Long vehicleNumber;
 
     @Column(name = "idleSince")
     private Date idleSince;
@@ -33,5 +34,5 @@ public class VehicleLocation extends BaseEntity<Long> {
     private Double lng;
 
     @Column(name = "p_timestamp")
-    private Date pTimestamp;
+    private Time pTimestamp;
 }
