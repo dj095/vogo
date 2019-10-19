@@ -1,8 +1,5 @@
 package com.kalaari.http;
 
-import com.kalaari.exception.DownstreamServiceException;
-import com.kalaari.exception.KalaariErrorCode;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,6 +14,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.kalaari.exception.DownstreamServiceException;
+import com.kalaari.exception.KalaariErrorCode;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -43,8 +45,7 @@ public class HttpClient {
     }
 
     public <T> T send(String uriString, HttpMethod httpMethod, HttpEntity<?> requestEntity, Class<T> tClass,
-            RetryTemplate retryTemplate) throws DownstreamServiceException
-    {
+            RetryTemplate retryTemplate) throws DownstreamServiceException {
         return send(uriString, httpMethod, requestEntity, tClass, false, retryTemplate);
     }
 

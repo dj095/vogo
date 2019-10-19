@@ -1,10 +1,8 @@
 package com.kalaari.integrationtest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kalaari.KalaariApplication;
 import java.util.LinkedList;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +15,16 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kalaari.KalaariApplication;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @RunWith(SpringRunner.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-//@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:/schema-kalaari.sql" })
+// @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+// "classpath:/schema-kalaari.sql" })
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = KalaariApplication.class)
 @ActiveProfiles("integrationtest")
 public class Tests {

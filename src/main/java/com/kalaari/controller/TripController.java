@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kalaari.entity.db.Trip;
-import com.kalaari.exception.KalaariException;
 import com.kalaari.service.TripService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class TripController {
 
     @GetMapping(value = "/get_trips_around_time")
     @ResponseBody
-    public List<Trip> getTripsAroundTime(@NotNull @RequestParam(value = "time") Time time) throws KalaariException {
+    public List<Trip> getTripsAroundTime(@NotNull @RequestParam(value = "time") Time time) {
         return tripService.getTripsAroundTime(time);
     }
 }
