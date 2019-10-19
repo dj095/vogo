@@ -30,7 +30,7 @@ database:
   kalaari:
     datasource:
       driverClassName: org.postgresql.Driver
-      url: postgresql://db-postgresql-alphax-do-user-6664467-0.db.ondigitalocean.com:25060/supply_shaper_db?sslmode=require
+      url: postgresql://db-postgresql-alphax-do-user-6664467-0.db.ondigitalocean.com:25060/supply_shaper_db
       username: alphax
       password: vvoj891xqj977gkl
       dialect: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
