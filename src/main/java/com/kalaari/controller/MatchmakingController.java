@@ -13,9 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kalaari.entity.db.Vehicle;
+import com.kalaari.entity.db.VehicleLocation;
 import com.kalaari.exception.KalaariException;
-import com.kalaari.service.CustomerService;
 import com.kalaari.service.MatchmakingService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,22 +22,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Validated
 @RestController
-@RequestMapping(value = "api/v1/demand")
-public class DemandController {
-
-    @Autowired
-    private CustomerService customerService;
+@RequestMapping(value = "api/v1/matchmaking")
+public class MatchmakingController {
 
     @Autowired
     private MatchmakingService matchmakingService;
 
     @GetMapping(value = "/get_vehicles")
     @ResponseBody
-    public List<Vehicle> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId,
-            @NotNull @RequestParam(value = "demand_center_id") Long demandCenterId,
-            @NotNull @RequestParam(value = "customer_lat") Double customerLat,
-            @NotNull @RequestParam(value = "customer_lng") Double customerLng,
+    public List<VehicleLocation> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId,
             @NotNull @RequestParam(value = "time_of_request") Date timeOfRequest) throws KalaariException {
-        return matchmakingService.getVehicles(customerId, customerLat, customerLng, demandCenterId, timeOfRequest);
+        return matchmakingService.getVehicles(customerId, timeOfRequest);
     }
 }

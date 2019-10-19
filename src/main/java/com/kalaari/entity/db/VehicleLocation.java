@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Where(clause = "deleted=false")
 public class VehicleLocation extends BaseEntity<Long> {
 
-    @Column(name = "vehicle_id")
-    private Long vehicleId;
+    @Column(name = "vehicle_number")
+    private Long vehicleNumber;
 
     @Column(name = "idleSince")
     private Date idleSince;

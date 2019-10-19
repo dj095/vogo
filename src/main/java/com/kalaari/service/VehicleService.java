@@ -7,17 +7,17 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kalaari.entity.db.Vehicle;
-import com.kalaari.repository.VehicleRepository;
+import com.kalaari.entity.db.VehicleLocation;
+import com.kalaari.repository.VehicleLocationRepository;
 
 @Service
 public class VehicleService {
 
     @Autowired
-    private VehicleRepository vehicleRepository;
+    private VehicleLocationRepository vehicleLocationRepository;
 
-    public List<Vehicle> getAllNearbyVehiclesAroundTime(Double lat, Double lng, Date timeOfRequest) {
-        return vehicleRepository.getAllNearbyVehiclesAroundTime(lat, lng, timeOfRequest,
+    public List<VehicleLocation> getAllNearbyVehiclesAroundTime(Double lat, Double lng, Date timeOfRequest) {
+        return vehicleLocationRepository.getAllNearbyVehiclesAroundTime(lat, lng, timeOfRequest,
                 new DateTime(timeOfRequest).plusHours(1).toDate());
     }
 }

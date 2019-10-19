@@ -24,6 +24,16 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = "rating")
     private Double rating;
 
+    @Column(name = "lat")
+    private Double lat;
+
+    @Column(name = "lng")
+    private Double lng;
+
     @Column(name = "no_of_rides")
     private Integer noOfRides;
+
+    public boolean isNewCustomer() {
+        return noOfRides == 0;
+    }
 }
