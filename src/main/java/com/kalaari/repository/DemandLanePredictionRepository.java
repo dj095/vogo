@@ -1,6 +1,5 @@
 package com.kalaari.repository;
 
-import java.sql.Time;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
@@ -11,9 +10,8 @@ import com.kalaari.entity.db.DemandLanePrediction;
 @Repository
 public interface DemandLanePredictionRepository extends CrudRepository<DemandLanePrediction, Long> {
 
-    List<DemandLanePrediction> findAllByFromDemandCenterIdAndToDemandCenterIdAndFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(
-            Long fromDcId, Long toDcId, Time fromTimeLessThan, Time toTimeGreaterThan);
+    List<DemandLanePrediction> findAllByFromDemandCenterIdAndToDemandCenterIdOrderByEstimatedDemandDesc(Long fromDcId,
+            Long toDcId);
 
-    List<DemandLanePrediction> findAllByFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(
-            Time fromTimeLessThan, Time toTimeGreaterThan);
+    List<DemandLanePrediction> findAllByOrderByEstimatedDemandDesc();
 }

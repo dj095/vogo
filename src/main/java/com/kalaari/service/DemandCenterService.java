@@ -1,8 +1,9 @@
 package com.kalaari.service;
 
-import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,19 +27,26 @@ public class DemandCenterService {
     @Autowired
     private DemandLanePredictionRepository demandLanePredictionRepository;
 
-    public List<DemandCenterPrediction> getTop10DemandCenterPredictions(Time currentTime) {
-        return demandCenterPredictionRepository
-                .findTop10ByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMins(currentTime, currentTime);
+    private Map<Long, DemandCenterPrediction> dcIdToDcp = new HashMap<>();
+
+    public List<DemandCenterPrediction> getTop10DemandCenterPredictions() {
+        return demandCenterPredictionRepository.findTop10ByOrderByIdleWaitMins();
     }
 
-    public List<DemandLanePrediction> getLanePredictions(Long fromDcId, Long toDcId, Time currentTime) {
+    public List<DemandLanePrediction> getLanePredictions(Long fromDcId, Long toDcId) {
         return demandLanePredictionRepository
-                .findAllByFromDemandCenterIdAndToDemandCenterIdAndFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(
-                        fromDcId, toDcId, currentTime, currentTime);
+                .findAllByFromDemandCenterIdAndToDemandCenterIdOrderByEstimatedDemandDesc(fromDcId, toDcId);
     }
 
     public DemandCenter getDemandCenterById(Long dcId) {
         return demandCenterRepository.findOne(dcId);
+    }
+
+    public DemandCenterPrediction getDemandCenterPredictionById(Long dcId) {
+        if (!dcIdToDcp.containsKey(dcId)) {
+            dcIdToDcp.put(dcId, demandCenterPredictionRepository.findByDemandCenterIdOrderByIdleWaitMins(dcId));
+        }
+        return dcIdToDcp.get(dcId);
     }
 
     public DemandCenter getNearestDemandCenter(Double lat, Double lng) {
@@ -53,13 +61,11 @@ public class DemandCenterService {
         return demandCenters;
     }
 
-    public List<DemandCenterPrediction> getDemandCenterPredictionAroundTime(Time time) {
-        return demandCenterPredictionRepository.findAllByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMins(time,
-                time);
+    public List<DemandCenterPrediction> getDemandCenterPredictionAroundTime() {
+        return demandCenterPredictionRepository.findAllByOrderByIdleWaitMins();
     }
 
-    public List<DemandLanePrediction> getDemandLanePredictionAroundTime(Time time) {
-        return demandLanePredictionRepository
-                .findAllByFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(time, time);
+    public List<DemandLanePrediction> getDemandLanePredictionAroundTime() {
+        return demandLanePredictionRepository.findAllByOrderByEstimatedDemandDesc();
     }
 }

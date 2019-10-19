@@ -11,4 +11,6 @@ import com.kalaari.entity.db.CustomerLanePreference;
 public interface CustomerLanePreferenceRepository extends CrudRepository<CustomerLanePreference, Long> {
 
     List<CustomerLanePreference> findAllByCustomerIdAndFromDemandCenterOrderByWeight(Long customerId, Long fromDcId);
+
+    List<CustomerLanePreference> findAllByFromDemandCenterOrderByWeight(Long fromDcId);
 }

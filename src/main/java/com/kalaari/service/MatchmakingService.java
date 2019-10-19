@@ -1,8 +1,6 @@
 package com.kalaari.service;
 
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +32,7 @@ public class MatchmakingService {
     @Autowired
     private VehicleService vehicleService;
 
-    public List<VehicleLocation> getVehicles(Long customerId, Time timeOfRequest) throws KalaariException {
+    public List<VehicleLocation> findVehicles(Long customerId) throws KalaariException {
 
         // FIND CUSTOMER
         Customer customer = customerService.getCustomerById(customerId);
@@ -56,11 +54,11 @@ public class MatchmakingService {
 
         // GET VEHICLES TO ALLOCATE
         List<VehicleLocation> vehiclesToAllocate = vehicleService.getAllNearbyVehiclesAroundTime(customerLat,
-                customerLng, timeOfRequest);
+                customerLng);
         log.info("vehiclesToAllocate size: {}", vehiclesToAllocate);
         if (CollectionUtils.isEmpty(vehiclesToAllocate)) {
-            throw new KalaariException(KalaariErrorCode.BAD_REQUEST, "No Vehices were found to allocate around time: "
-                    + timeOfRequest + ", for lat: " + customerLat + " lng: " + customerLng);
+            throw new KalaariException(KalaariErrorCode.BAD_REQUEST,
+                    "No Vehices were found to allocate for lat: " + customerLat + " lng: " + customerLng);
         }
 
         // GET CUSTOMER LANE PREF
@@ -69,18 +67,17 @@ public class MatchmakingService {
         log.info("lanePreferences size: {}", lanePreferences);
 
         // GET CENTER PREDICTIONS AROUND TIME OF REQUEST
-        List<DemandCenterPrediction> demandCenterPredictions = demandCenterService
-                .getTop10DemandCenterPredictions(new Time(timeOfRequest.getTime()));
+        List<DemandCenterPrediction> demandCenterPredictions = demandCenterService.getTop10DemandCenterPredictions();
         log.info("demandCenterPredictions size: {}", demandCenterPredictions.size());
 
         // ALLOCATE
         return shouldShowVehicles(customer, lanePreferences, demandCenterPredictions, vehiclesToAllocate,
-                nearestDemandCenter, timeOfRequest) ? vehiclesToAllocate : new ArrayList<>();
+                nearestDemandCenter) ? vehiclesToAllocate : new ArrayList<>();
     }
 
     public boolean shouldShowVehicles(Customer customer, List<CustomerLanePreference> lanePreferences,
             List<DemandCenterPrediction> demandCenterPredictions, List<VehicleLocation> vehiclesToAllocate,
-            DemandCenter sourceDC, Date timeOfRequest) {
+            DemandCenter sourceDC) {
 
         boolean show = matchLanePrefWithDemandPrediction(lanePreferences, demandCenterPredictions);
         if (!show) {
@@ -92,9 +89,8 @@ public class MatchmakingService {
                     for (DemandCenterPrediction destinationDCP : demandCenterPredictions) {
 
                         // GET LANE PREDICTIONS AROUND TIME OF REQUEST
-                        List<DemandLanePrediction> demandLanePredictions = demandCenterService.getLanePredictions(
-                                sourceDC.getId(), destinationDCP.getDemandCenterId(),
-                                new Time(timeOfRequest.getTime()));
+                        List<DemandLanePrediction> demandLanePredictions = demandCenterService
+                                .getLanePredictions(sourceDC.getId(), destinationDCP.getDemandCenterId());
                         log.info("demandLanePredictions size: {}", demandLanePredictions.size());
 
                         if (!CollectionUtils.isEmpty(demandLanePredictions)) {

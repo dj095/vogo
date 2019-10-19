@@ -1,6 +1,5 @@
 package com.kalaari.controller;
 
-import java.sql.Time;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -30,8 +29,8 @@ public class MatchmakingController {
 
     @GetMapping(value = "/find_vehicles")
     @ResponseBody
-    public List<VehicleLocation> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId,
-            @NotNull @RequestParam(value = "time_of_request") Time timeOfRequest) throws KalaariException {
-        return matchmakingService.getVehicles(customerId, timeOfRequest);
+    public List<VehicleLocation> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId)
+            throws KalaariException {
+        return matchmakingService.findVehicles(customerId);
     }
 }

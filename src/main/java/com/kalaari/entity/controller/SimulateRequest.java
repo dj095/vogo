@@ -1,19 +1,23 @@
-package com.kalaari.model;
+package com.kalaari.entity.controller;
+
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FCFSOutput {
-    private Long stationId;
-    private Long count;
+public class SimulateRequest {
+
+    private List<Long> demandPerDemandCenter;
 }

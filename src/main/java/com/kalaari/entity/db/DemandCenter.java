@@ -27,6 +27,9 @@ public class DemandCenter extends BaseEntity<Long> {
     @Column(name = "lng")
     private Double lng;
 
+    @Column(name = "no_of_vehicles")
+    private Long noOfVehicles;
+
     @Column(name = "radius")
     private Double radius;
 }

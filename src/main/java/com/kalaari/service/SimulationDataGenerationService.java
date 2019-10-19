@@ -1,5 +1,13 @@
 package com.kalaari.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.kalaari.entity.controller.SimulationGeneratorRequest;
 import com.kalaari.entity.db.Customer;
 import com.kalaari.entity.db.CustomerLanePreference;
@@ -8,13 +16,8 @@ import com.kalaari.model.SimulatorInput;
 import com.kalaari.repository.CustomerLanePreferenceRepository;
 import com.kalaari.repository.CustomerRepository;
 import com.kalaari.repository.DemandCenterRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -29,11 +32,11 @@ public class SimulationDataGenerationService {
     @Autowired
     private CustomerLanePreferenceRepository customerLanePreferenceRepository;
 
-    private SimulatorInput generateData(SimulationGeneratorRequest simulationGeneratorRequest) {
+    public SimulatorInput generateData(SimulationGeneratorRequest simulationGeneratorRequest) {
         List<SimulatorInput.SimulatorInputEntity> simulatorInputEntityList = new ArrayList<>();
-        Map<Long, Long> dcIdToCountMap = simulationGeneratorRequest.getData().stream().collect(Collectors.toMap(
-                SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getDcId,
-                SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getCount));
+        Map<Long, Long> dcIdToCountMap = simulationGeneratorRequest.getData().stream()
+                .collect(Collectors.toMap(SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getDcId,
+                        SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getCount));
         List<Long> dcIdList = new ArrayList<>(dcIdToCountMap.keySet());
         Integer numDc = dcIdList.size();
         Long customerId = 1L;
@@ -47,15 +50,16 @@ public class SimulationDataGenerationService {
                 Integer toIndex = (generateRandomNumber(numDc - 1)) % numDc;
                 Long toDcId = dcIdList.get(toIndex);
 
-                Customer customer = new Customer(customerId.toString(), 3D, demandCenter.getLat(), demandCenter.getLng(), 0);
+                Customer customer = new Customer(customerId.toString(), 3D, demandCenter.getLat(),
+                        demandCenter.getLng(), 0);
                 customer = customerRepository.save(customer);
-                CustomerLanePreference customerLanePreference = new CustomerLanePreference(customer.getId(), dcId, toDcId, 0);
+                CustomerLanePreference customerLanePreference = new CustomerLanePreference(customer.getId(), dcId,
+                        toDcId, 0);
                 customerLanePreferenceRepository.save(customerLanePreference);
 
                 simulatorInputEntityList.add(new SimulatorInput.SimulatorInputEntity(dcId, toDcId, customer.getId()));
-                dcIdToCountMap.put(dcId, dcIdToCountMap.get(dcId)-1);
-            }
-            else {
+                dcIdToCountMap.put(dcId, dcIdToCountMap.get(dcId) - 1);
+            } else {
                 dcIdToCountMap.remove(dcId);
             }
         }

@@ -24,6 +24,10 @@ public class CustomerService {
                 demandCenterId);
     }
 
+    public List<CustomerLanePreference> getCustomerLanePreferences(Long demandCenterId) {
+        return customerLanePreferenceRepository.findAllByFromDemandCenterOrderByWeight(demandCenterId);
+    }
+
     public Customer getCustomerById(Long customerId) {
         return customerRepository.findOne(customerId);
     }
