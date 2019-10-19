@@ -14,6 +14,7 @@ import com.kalaari.repository.CustomerRepository;
 import com.kalaari.repository.DemandCenterPredictionRepository;
 import com.kalaari.repository.DemandCenterRepository;
 import com.kalaari.repository.DemandLanePredictionRepository;
+import com.kalaari.repository.GenericRepository;
 import com.kalaari.repository.VehicleLocationRepository;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +51,11 @@ public class SimulationDataGenerationService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private GenericRepository genericRepository;
+
     public SimulatorInput generateData() {
+        clearData();
         SimulationGeneratorRequest simulationGeneratorRequest = mockRequest();
         createDemandCentreData(simulationGeneratorRequest);
         List<SimulatorInput.SimulatorInputEntity> simulatorInputEntityList = new ArrayList<>();
@@ -107,7 +112,7 @@ public class SimulationDataGenerationService {
             demandCenter.setNoOfVehicles(simulationGeneratorRequestEntity.getSupplyCount());
             createVehicles(demandCenter);
             DemandCenter demandCenterExisting = demandCenterRepository.findByName(demandCenter.getName());
-            if (demandCenterExisting != null) {
+            if (demandCenterExisting == null) {
                 demandCenter = demandCenterRepository.save(demandCenter);
             }
             demandCenterList.add(demandCenter);
@@ -190,4 +195,8 @@ public class SimulationDataGenerationService {
         }
     }
 
+    private void clearData() {
+        genericRepository.runQuery("drop table customer; drop table customer_lane_preference; drop table demand_center; drop table demand_center_prediction; drop table demand_lane_prediction; drop table vehicle_location;");
+        log.debug("Cleared data");
+    }
 }
