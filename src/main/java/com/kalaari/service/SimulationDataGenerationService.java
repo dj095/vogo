@@ -131,14 +131,17 @@ public class SimulationDataGenerationService {
         estimatedDemandMap.get("Whitefield").put("Sarjapur", 3L);
         estimatedDemandMap.get("Whitefield").put("Electronic City", 4L);
 
+        estimatedDemandMap.put("Marathahalli", new HashMap<>());
         estimatedDemandMap.get("Marathahalli").put("Whitefield", 1L);
         estimatedDemandMap.get("Marathahalli").put("Sarjapur", 3L);
         estimatedDemandMap.get("Marathahalli").put("Electronic City", 4L);
 
+        estimatedDemandMap.put("Sarjapur", new HashMap<>());
         estimatedDemandMap.get("Sarjapur").put("Whitefield", 1L);
         estimatedDemandMap.get("Sarjapur").put("Marathahalli", 2L);
         estimatedDemandMap.get("Sarjapur").put("Electronic City", 4L);
 
+        estimatedDemandMap.put("Electronic City", new HashMap<>());
         estimatedDemandMap.get("Electronic City").put("Whitefield", 1L);
         estimatedDemandMap.get("Electronic City").put("Marathahalli", 2L);
         estimatedDemandMap.get("Electronic City").put("Sarjapur", 3L);
