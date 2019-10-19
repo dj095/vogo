@@ -1,23 +1,28 @@
 package com.kalaari.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.kalaari.entity.controller.SimulationGeneratorRequest;
 import com.kalaari.entity.db.Customer;
 import com.kalaari.entity.db.CustomerLanePreference;
 import com.kalaari.entity.db.DemandCenter;
+import com.kalaari.entity.db.DemandCenterPrediction;
+import com.kalaari.entity.db.DemandLanePrediction;
+import com.kalaari.entity.db.VehicleLocation;
 import com.kalaari.model.SimulatorInput;
 import com.kalaari.repository.CustomerLanePreferenceRepository;
 import com.kalaari.repository.CustomerRepository;
+import com.kalaari.repository.DemandCenterPredictionRepository;
 import com.kalaari.repository.DemandCenterRepository;
-
+import com.kalaari.repository.DemandLanePredictionRepository;
+import com.kalaari.repository.VehicleLocationRepository;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -32,7 +37,17 @@ public class SimulationDataGenerationService {
     @Autowired
     private CustomerLanePreferenceRepository customerLanePreferenceRepository;
 
+    @Autowired
+    private DemandCenterPredictionRepository demandCenterPredictionRepository;
+
+    @Autowired
+    private VehicleLocationRepository vehicleLocationRepository;
+
+    @Autowired
+    private DemandLanePredictionRepository demandLanePredictionRepository;
+
     public SimulatorInput generateData(SimulationGeneratorRequest simulationGeneratorRequest) {
+        createDemandCentreData(simulationGeneratorRequest);
         List<SimulatorInput.SimulatorInputEntity> simulatorInputEntityList = new ArrayList<>();
         Map<Long, Long> dcIdToCountMap = simulationGeneratorRequest.getData().stream()
                 .collect(Collectors.toMap(SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getDcId,
@@ -70,4 +85,74 @@ public class SimulationDataGenerationService {
     private Integer generateRandomNumber(Integer maxval) {
         return (int) (Math.random() * maxval);
     }
+
+    private void createDemandCentreData(SimulationGeneratorRequest simulationGeneratorRequest) {
+        List<DemandCenter> demandCenterList = new ArrayList<>();
+        Map<Long, DemandCenter> demandCenterMap = new HashMap<>();
+        demandCenterMap.put(1L, new DemandCenter("Whitefield", 12.977720, 77.741395, null, 200.0));
+        demandCenterMap.put(2L, new DemandCenter("Marathahalli", 12.967636, 77.695034, null, 200.0));
+        demandCenterMap.put(3L, new DemandCenter("Sarjapur", 12.859945, 77.791261, null, 200.0));
+        demandCenterMap.put(4L, new DemandCenter("Electronic City", 12.834977, 77.665627, null, 200.0));
+        for (SimulationGeneratorRequest.SimulationGeneratorRequestEntity simulationGeneratorRequestEntity : simulationGeneratorRequest.getData()) {
+            DemandCenter demandCenter = demandCenterMap.get(simulationGeneratorRequestEntity.getDcId());
+            demandCenter.setNoOfVehicles(simulationGeneratorRequestEntity.getSupplyCount());
+            createVehicles(demandCenter);
+            demandCenter = demandCenterRepository.save(demandCenter);
+            createDemandCentrePredictionData(demandCenter);
+        }
+        createLanePredictionData(demandCenterList);
+    }
+
+    private void createVehicles(DemandCenter demandCenter) {
+        for (int i = 0 ; i < demandCenter.getNoOfVehicles() ; i++) {
+            String registrationNumber = "KA" + demandCenter.getName().toUpperCase().substring(0, 4) + String.valueOf(i+1);
+            VehicleLocation vehicleLocation = new VehicleLocation(registrationNumber, new Date(), demandCenter.getLat(), demandCenter.getLng(), null);
+            vehicleLocationRepository.save(vehicleLocation);
+        }
+    }
+
+    private void createDemandCentrePredictionData(DemandCenter demandCenter) {
+        Map<String, Long> idleWaitMinsMap = new HashMap<>();
+        idleWaitMinsMap.put("Whitefield", 20L);
+        idleWaitMinsMap.put("Marathahalli", 30L);
+        idleWaitMinsMap.put("Sarjapur", 40L);
+        idleWaitMinsMap.put("Electronic City", 60L);
+        DemandCenterPrediction demandCenterPrediction = new DemandCenterPrediction(demandCenter.getId(),
+                null, null, idleWaitMinsMap.get(demandCenter.getName()));
+        demandCenterPredictionRepository.save(demandCenterPrediction);
+    }
+
+    private void createLanePredictionData(List<DemandCenter> demandCenterList) {
+
+        Map<String, Map<String, Long>> estimatedDemandMap = new HashMap<>();
+
+        estimatedDemandMap.put("Whitefield", new HashMap<>());
+        estimatedDemandMap.get("Whitefield").put("Marathahalli", 2L);
+        estimatedDemandMap.get("Whitefield").put("Sarjapur", 3L);
+        estimatedDemandMap.get("Whitefield").put("Electronic City", 4L);
+
+        estimatedDemandMap.get("Marathahalli").put("Whitefield", 1L);
+        estimatedDemandMap.get("Marathahalli").put("Sarjapur", 3L);
+        estimatedDemandMap.get("Marathahalli").put("Electronic City", 4L);
+
+        estimatedDemandMap.get("Sarjapur").put("Whitefield", 1L);
+        estimatedDemandMap.get("Sarjapur").put("Marathahalli", 2L);
+        estimatedDemandMap.get("Sarjapur").put("Electronic City", 4L);
+
+        estimatedDemandMap.get("Electronic City").put("Whitefield", 1L);
+        estimatedDemandMap.get("Electronic City").put("Marathahalli", 2L);
+        estimatedDemandMap.get("Electronic City").put("Sarjapur", 3L);
+
+        for (DemandCenter fromDemandCenter : demandCenterList) {
+            for (DemandCenter toDemandCenter : demandCenterList) {
+                if (fromDemandCenter.equals(toDemandCenter))
+                    continue;
+                DemandLanePrediction demandLanePrediction = new DemandLanePrediction(fromDemandCenter.getId(),
+                        toDemandCenter.getId(), null, null, estimatedDemandMap.get(fromDemandCenter.getName()).get(toDemandCenter.getName()),
+                        null);
+                demandLanePredictionRepository.save(demandLanePrediction);
+            }
+        }
+    }
+
 }

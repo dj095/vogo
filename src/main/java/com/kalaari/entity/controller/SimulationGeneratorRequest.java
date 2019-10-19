@@ -26,6 +26,7 @@ public class SimulationGeneratorRequest {
     public static class SimulationGeneratorRequestEntity {
         private Long dcId;
         private Long count;
+        private Long supplyCount;
     }
 
 }

@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class VehicleLocation extends BaseEntity<Long> {
 
     @Column(name = "vehicle_number")
-    private Long vehicleNumber;
+    private String vehicleNumber;
 
     @Column(name = "idleSince")
     private Date idleSince;
