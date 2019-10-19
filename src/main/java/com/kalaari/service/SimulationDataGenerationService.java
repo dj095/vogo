@@ -196,7 +196,7 @@ public class SimulationDataGenerationService {
     }
 
     private void clearData() {
-        genericRepository.runQuery("drop table customer; drop table customer_lane_preference; drop table demand_center; drop table demand_center_prediction; drop table demand_lane_prediction; drop table vehicle_location;");
+//        genericRepository.runQuery("drop table customer; drop table customer_lane_preference; drop table demand_center; drop table demand_center_prediction; drop table demand_lane_prediction; drop table vehicle_location;");
         log.debug("Cleared data");
     }
 }
