@@ -12,7 +12,7 @@ import com.kalaari.entity.db.VehicleLocation;
 @Repository
 public interface VehicleLocationRepository extends CrudRepository<VehicleLocation, Long> {
 
-    @Query(value = "select * from vehicle_location where ST_DWithin(ST_POINT(lng, lat), ST_Point(:request_lng, :request_lat), radius)",
+    @Query(value = "select * from vehicle_location where ST_DWithin(ST_POINT(lng, lat), ST_Point(:request_lng, :request_lat), 1000)",
             nativeQuery = true)
     List<VehicleLocation> getAllNearbyVehiclesAroundTime(@Param("request_lat") Double lat,
             @Param("request_lng") Double lng);
