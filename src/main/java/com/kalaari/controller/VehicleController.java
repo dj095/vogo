@@ -14,24 +14,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kalaari.entity.db.VehicleLocation;
-import com.kalaari.exception.KalaariException;
-import com.kalaari.service.MatchmakingService;
+import com.kalaari.service.VehicleService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Validated
 @RestController
-@RequestMapping(value = "api/v1/matchmaking")
-public class MatchmakingController {
+@RequestMapping(value = "api/v1/vehicle")
+public class VehicleController {
 
     @Autowired
-    private MatchmakingService matchmakingService;
+    private VehicleService vehicleService;
 
-    @GetMapping(value = "/find_vehicles")
+    @GetMapping(value = "/get_vehicles_around_time")
     @ResponseBody
-    public List<VehicleLocation> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId,
-            @NotNull @RequestParam(value = "time_of_request") Time timeOfRequest) throws KalaariException {
-        return matchmakingService.getVehicles(customerId, timeOfRequest);
+    public List<VehicleLocation> getVehiclesAroundTime(@NotNull @RequestParam(value = "time") Time time) {
+        return vehicleService.getVehiclesAroundTime(time);
     }
 }

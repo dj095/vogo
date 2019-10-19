@@ -13,4 +13,7 @@ public interface DemandLanePredictionRepository extends CrudRepository<DemandLan
 
     List<DemandLanePrediction> findAllByFromDemandCenterIdAndToDemandCenterIdAndFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(
             Long fromDcId, Long toDcId, Time fromTimeLessThan, Time toTimeGreaterThan);
+
+    List<DemandLanePrediction> findAllByFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(
+            Time fromTimeLessThan, Time toTimeGreaterThan);
 }

@@ -1,5 +1,6 @@
 package com.kalaari.entity.db;
 
+import java.sql.Time;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -33,5 +34,5 @@ public class VehicleLocation extends BaseEntity<Long> {
     private Double lng;
 
     @Column(name = "p_timestamp")
-    private Date pTimestamp;
+    private Time pTimestamp;
 }

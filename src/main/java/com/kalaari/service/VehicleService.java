@@ -1,6 +1,6 @@
 package com.kalaari.service;
 
-import java.util.Date;
+import java.sql.Time;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -16,8 +16,13 @@ public class VehicleService {
     @Autowired
     private VehicleLocationRepository vehicleLocationRepository;
 
-    public List<VehicleLocation> getAllNearbyVehiclesAroundTime(Double lat, Double lng, Date timeOfRequest) {
+    public List<VehicleLocation> getAllNearbyVehiclesAroundTime(Double lat, Double lng, Time timeOfRequest) {
         return vehicleLocationRepository.getAllNearbyVehiclesAroundTime(lat, lng, timeOfRequest,
-                new DateTime(timeOfRequest).plusHours(1).toDate());
+                new Time(new DateTime(timeOfRequest).plusHours(1).getMillis()));
+    }
+
+    public List<VehicleLocation> getVehiclesAroundTime(Time timeOfRequest) {
+        return vehicleLocationRepository.getAllVehiclesAroundTime(timeOfRequest,
+                new Time(new DateTime(timeOfRequest).plusHours(1).getMillis()));
     }
 }

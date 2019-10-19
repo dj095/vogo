@@ -1,6 +1,6 @@
 package com.kalaari.repository;
 
-import java.util.Date;
+import java.sql.Time;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -16,5 +16,10 @@ public interface VehicleLocationRepository extends CrudRepository<VehicleLocatio
     @Query(value = "select * from vehicle_location where ST_DWithin(ST_POINT(lng, lat), ST_Point(:request_lng, :request_lat), radius) and p_timestamp > :start_time and p_timestamp < :end_time",
             nativeQuery = true)
     List<VehicleLocation> getAllNearbyVehiclesAroundTime(@Param("request_lat") Double lat,
-            @Param("request_lng") Double lng, @Param("start_time") Date startTime, @Param("end_time") Date endTime);
+            @Param("request_lng") Double lng, @Param("start_time") Time startTime, @Param("end_time") Time endTime);
+
+    @Query(value = "select * from vehicle_location where p_timestamp > :start_time and p_timestamp < :end_time",
+            nativeQuery = true)
+    List<VehicleLocation> getAllVehiclesAroundTime(@Param("start_time") Time startTime,
+            @Param("end_time") Time endTime);
 }

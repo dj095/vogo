@@ -1,6 +1,7 @@
 package com.kalaari.service;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class DemandCenterService {
 
     public List<DemandCenterPrediction> getTop10DemandCenterPredictions(Time currentTime) {
         return demandCenterPredictionRepository
-                .findTop10ByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMinsDesc(currentTime, currentTime);
+                .findTop10ByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMins(currentTime, currentTime);
     }
 
     public List<DemandLanePrediction> getLanePredictions(Long fromDcId, Long toDcId, Time currentTime) {
@@ -42,5 +43,23 @@ public class DemandCenterService {
 
     public DemandCenter getNearestDemandCenter(Double lat, Double lng) {
         return demandCenterRepository.getNearestDemandCenter(lat, lng);
+    }
+
+    public List<DemandCenter> getAllDemandCenters() {
+        List<DemandCenter> demandCenters = new ArrayList<>();
+        for (DemandCenter demandCenter : demandCenterRepository.findAll()) {
+            demandCenters.add(demandCenter);
+        }
+        return demandCenters;
+    }
+
+    public List<DemandCenterPrediction> getDemandCenterPredictionAroundTime(Time time) {
+        return demandCenterPredictionRepository.findAllByFromTimeLessThanAndToTimeGreaterThanOrderByIdleWaitMins(time,
+                time);
+    }
+
+    public List<DemandLanePrediction> getDemandLanePredictionAroundTime(Time time) {
+        return demandLanePredictionRepository
+                .findAllByFromTimeLessThanAndToTimeGreaterThanOrderByEstimatedDemandDesc(time, time);
     }
 }

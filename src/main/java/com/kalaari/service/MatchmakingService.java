@@ -34,7 +34,7 @@ public class MatchmakingService {
     @Autowired
     private VehicleService vehicleService;
 
-    public List<VehicleLocation> getVehicles(Long customerId, Date timeOfRequest) throws KalaariException {
+    public List<VehicleLocation> getVehicles(Long customerId, Time timeOfRequest) throws KalaariException {
 
         // FIND CUSTOMER
         Customer customer = customerService.getCustomerById(customerId);
