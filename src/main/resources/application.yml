@@ -30,9 +30,9 @@ database:
   kalaari:
     datasource:
       driverClassName: org.postgresql.Driver
-      url: # TODO: ADD PROD URL HERE
-      username: root
-      password: root
+      url: jdbc:postgresql://private-db-postgresql-alphax-do-user-6664467-0.db.ondigitalocean.com/supply_shaper_db
+      username: alphax
+      password: vvoj891xqj977gkl
       dialect: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
       validationQuery: SELECT 1
       testOnBorrow: true
