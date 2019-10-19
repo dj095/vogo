@@ -1,5 +1,6 @@
 package com.kalaari.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kalaari.entity.controller.SimulationGeneratorRequest;
 import com.kalaari.entity.db.Customer;
 import com.kalaari.entity.db.CustomerLanePreference;
@@ -46,7 +47,11 @@ public class SimulationDataGenerationService {
     @Autowired
     private DemandLanePredictionRepository demandLanePredictionRepository;
 
-    public SimulatorInput generateData(SimulationGeneratorRequest simulationGeneratorRequest) {
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public SimulatorInput generateData() {
+        SimulationGeneratorRequest simulationGeneratorRequest = mockRequest();
         createDemandCentreData(simulationGeneratorRequest);
         List<SimulatorInput.SimulatorInputEntity> simulatorInputEntityList = new ArrayList<>();
         Map<Long, Long> dcIdToCountMap = simulationGeneratorRequest.getData().stream()
@@ -78,7 +83,11 @@ public class SimulationDataGenerationService {
                 dcIdToCountMap.remove(dcId);
             }
         }
-
+        try {
+            log.debug(objectMapper.writeValueAsString(simulatorInputEntityList));
+        } catch (Exception ex) {
+            log.error("Error in generating data: {}", ex.getMessage(), ex);
+        }
         return new SimulatorInput(simulatorInputEntityList);
     }
 
@@ -98,6 +107,7 @@ public class SimulationDataGenerationService {
             demandCenter.setNoOfVehicles(simulationGeneratorRequestEntity.getSupplyCount());
             createVehicles(demandCenter);
             demandCenter = demandCenterRepository.save(demandCenter);
+            demandCenterList.add(demandCenter);
             createDemandCentrePredictionData(demandCenter);
         }
         createLanePredictionData(demandCenterList);
@@ -155,6 +165,15 @@ public class SimulationDataGenerationService {
                         null);
                 demandLanePredictionRepository.save(demandLanePrediction);
             }
+        }
+    }
+
+    private SimulationGeneratorRequest mockRequest() {
+        String requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 10,\"supply_count\": 20},{\"dc_id\": 2,\"count\": 5,\"supply_count\": 20},{\"dc_id\": 3,\"count\": 7,\"supply_count\": 20}]}";
+        try {
+            return objectMapper.readValue(requestString, SimulationGeneratorRequest.class);
+        } catch (Exception ex) {
+            return null;
         }
     }
 

@@ -1,25 +1,21 @@
 package com.kalaari.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.kalaari.constant.EnumConstants;
 import com.kalaari.entity.common.DemandCenterState;
 import com.kalaari.entity.common.SimulationOutput;
 import com.kalaari.entity.common.Trip;
-import com.kalaari.entity.controller.SimulationGeneratorRequest;
 import com.kalaari.entity.db.DemandCenterPrediction;
 import com.kalaari.exception.KalaariException;
 import com.kalaari.model.FCFSOutput;
 import com.kalaari.model.SimulatorInput;
 import com.kalaari.simulator.SupplyVisibilitySimulator;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -40,13 +36,13 @@ public class SimulationService {
     @Autowired
     private SimulationDataGenerationService simulationDataGenerationService;
 
-    public Map<EnumConstants.SimulationType, SimulationOutput> simulate(SimulationGeneratorRequest simulateRequest)
+    public Map<EnumConstants.SimulationType, SimulationOutput> simulate()
             throws KalaariException {
 
         Map<EnumConstants.SimulationType, SimulationOutput> simulationOutputMap = new HashMap<>();
 
         // BUILD SIMULATOR INPUT
-        SimulatorInput simulatorInput = simulationDataGenerationService.generateData(simulateRequest);
+        SimulatorInput simulatorInput = simulationDataGenerationService.generateData();
 
         SimulationOutput svSimulationOutput = null;
         for (SimulatorInput.SimulatorInputEntity input : simulatorInput.getData()) {
