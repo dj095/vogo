@@ -38,6 +38,7 @@ database:
       testOnBorrow: true
     jpa:
       hibernate:
+        mode: update
         ddl-auto: none
         show-sql: true
 

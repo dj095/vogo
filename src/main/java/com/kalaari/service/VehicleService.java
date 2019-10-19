@@ -15,7 +15,6 @@ public class VehicleService {
     private VehicleRepository vehicleRepository;
 
     public List<Vehicle> getAllNearbyVehicles(Double lat, Double lng) {
-//        return vehicleRepository.getAllNearbyVehicles(lat, lng);
-        return null;
+        return vehicleRepository.getAllNearbyVehicles(lat, lng);
     }
 }
