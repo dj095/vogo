@@ -1,4 +1,4 @@
-package com.kalaari.model;
+package com.kalaari.entity.controller;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -13,18 +13,17 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SimulatorInput {
-
-    private List<SimulatorInputEntity> data;
+public class SimulationGeneratorRequest {
+    private List<SimulationGeneratorRequestEntity> data;
 
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
     @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class SimulatorInputEntity {
-        private Long fromStation;
-        private Long toStation;
-        private Long customerId;
+    public static class SimulationGeneratorRequestEntity {
+        private Long dcId;
+        private Long count;
     }
+
 }
