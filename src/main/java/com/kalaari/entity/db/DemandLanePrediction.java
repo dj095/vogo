@@ -1,5 +1,17 @@
 package com.kalaari.entity.db;
 
+import java.sql.Time;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Where;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Table(name = "demand_lane_prediction")
 @Entity
 @Data
