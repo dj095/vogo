@@ -36,7 +36,9 @@ public class DemandController {
     @ResponseBody
     public List<Vehicle> getVehicles(@NotNull @RequestParam(value = "customer_id") Long customerId,
             @NotNull @RequestParam(value = "demand_center_id") Long demandCenterId,
+            @NotNull @RequestParam(value = "customer_lat") Double customerLat,
+            @NotNull @RequestParam(value = "customer_lng") Double customerLng,
             @NotNull @RequestParam(value = "time_of_request") Date timeOfRequest) throws KalaariException {
-        return matchmakingService.getVehicles(customerId, demandCenterId, timeOfRequest);
+        return matchmakingService.getVehicles(customerId, customerLat, customerLng, demandCenterId, timeOfRequest);
     }
 }

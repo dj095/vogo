@@ -25,23 +25,40 @@ public class MatchmakingService {
     @Autowired
     private DemandCenterService demandCenterService;
 
-    public List<Vehicle> getVehicles(Long customerId, Long demandCenterId, Date timeOfRequest) throws KalaariException {
+    @Autowired
+    private VehicleService vehicleService;
+
+    public List<Vehicle> getVehicles(Long customerId, Double customerLat, Double customerLng, Long demandCenterId,
+            Date timeOfRequest) throws KalaariException {
+
+        // FIND CUSTOMER
         Customer customer = customerService.getCustomerById(customerId);
         if (customer == null) {
             throw new KalaariException(KalaariErrorCode.BAD_REQUEST, "Customer: " + customerId + " does not exist !");
         }
+
+        // GET VEHICLES TO ALLOCATE
+        List<Vehicle> vehiclesToAllocate = vehicleService.getAllNearbyVehiclesAroundTime(customerLat, customerLng,
+                timeOfRequest);
+        if (CollectionUtils.isEmpty(vehiclesToAllocate)) {
+            throw new KalaariException(KalaariErrorCode.BAD_REQUEST, "No Vehices were found to allocate around time: "
+                    + timeOfRequest + ", for lat: " + customerLat + " lng: " + customerLng);
+        }
+
+        // GET CUSTOMER LANE PREF
         List<CustomerLanePreference> lanePreferences = customerService.getCustomerLanePreferences(customerId,
                 demandCenterId);
-        if (CollectionUtils.isEmpty(lanePreferences)) {
 
-        }
+        // GET DC PREDICTIONS
         List<DemandCenterPrediction> demandCenterPredictions = demandCenterService
                 .getDemandCenterPredictions(new Time(timeOfRequest.getTime()));
-        return allocateVehicles(customer, lanePreferences, demandCenterPredictions);
+
+        // ALLOCATE
+        return allocateVehicles(customer, lanePreferences, demandCenterPredictions, vehiclesToAllocate);
     }
 
     public List<Vehicle> allocateVehicles(Customer customer, List<CustomerLanePreference> lanePreferences,
-            List<DemandCenterPrediction> demandCenterPredictions) {
+            List<DemandCenterPrediction> demandCenterPredictions, List<Vehicle> vehiclesToAllocate) {
         List<Vehicle> allocatedVehicles = new ArrayList<>();
         if (!CollectionUtils.isEmpty(lanePreferences)) {
             for (CustomerLanePreference lanePreference : lanePreferences) {
@@ -50,6 +67,6 @@ public class MatchmakingService {
 
             }
         }
-        return null;
+        return allocatedVehicles;
     }
 }
