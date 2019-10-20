@@ -1,12 +1,5 @@
 package com.kalaari.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.kalaari.entity.db.Customer;
 import com.kalaari.entity.db.CustomerLanePreference;
 import com.kalaari.entity.db.DemandCenter;
@@ -15,9 +8,12 @@ import com.kalaari.entity.db.DemandLanePrediction;
 import com.kalaari.entity.db.VehicleLocation;
 import com.kalaari.exception.KalaariErrorCode;
 import com.kalaari.exception.KalaariException;
-import com.kalaari.util.GeoLocationUtils;
-
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Slf4j
 @Service
@@ -88,6 +84,11 @@ public class MatchmakingService {
                 if (!CollectionUtils.isEmpty(demandCenterPredictions)) {
                     for (DemandCenterPrediction destinationDCP : demandCenterPredictions) {
 
+                        if(sourceDC.getId().equals(destinationDCP.getDemandCenterId())) {
+                            show = false;
+                            break;
+                        }
+
                         // GET LANE PREDICTIONS AROUND TIME OF REQUEST
                         List<DemandLanePrediction> demandLanePredictions = demandCenterService
                                 .getLanePredictions(sourceDC.getId(), destinationDCP.getDemandCenterId());
@@ -95,27 +96,32 @@ public class MatchmakingService {
 
                         if (!CollectionUtils.isEmpty(demandLanePredictions)) {
 
+                            long demand = 0;
                             for (DemandLanePrediction dlp : demandLanePredictions) {
-                                if (vehiclesToAllocate.size() >= dlp.getEstimatedDemand()) {
-
-                                    // SUPPLY WILL BE EXCESS EVEN AFTER SATISFYING DEST DEMAND
-                                    show = true;
-                                    break;
-                                }
+                                demand += dlp.getEstimatedDemand();
                             }
+                            if (vehiclesToAllocate.size() >= demand) {
+
+                                // SUPPLY WILL BE EXCESS EVEN AFTER SATISFYING DEST DEMAND
+                                show = true;
+                            }
+                        } else {
+                            show = true;
                         }
 
                         if (show) {
                             break;
                         }
                     }
+                } else {
+                    show = true;
                 }
 
                 if (!show) {
 
-                    double distanceBetweenCustomerAndSourceDC = GeoLocationUtils.distance(customer.getLat(),
-                            customer.getLng(), sourceDC.getLat(), sourceDC.getLng());
-                    show = distanceBetweenCustomerAndSourceDC < 50000D;
+//                    double distanceBetweenCustomerAndSourceDC = GeoLocationUtils.distance(customer.getLat(),
+//                            customer.getLng(), sourceDC.getLat(), sourceDC.getLng());
+//                    show = distanceBetweenCustomerAndSourceDC * 1000D < 50D;
                 }
             }
         }

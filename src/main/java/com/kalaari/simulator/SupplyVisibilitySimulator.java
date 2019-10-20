@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,10 +14,11 @@ import com.kalaari.entity.common.Trip;
 import com.kalaari.entity.db.DemandCenter;
 import com.kalaari.entity.db.DemandCenterPrediction;
 import com.kalaari.entity.db.VehicleLocation;
-import com.kalaari.exception.KalaariException;
 import com.kalaari.model.SimulatorInput;
+import com.kalaari.repository.VehicleLocationRepository;
 import com.kalaari.service.DemandCenterService;
 import com.kalaari.service.MatchmakingService;
+import com.kalaari.util.ContextHolder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,20 +33,21 @@ public class SupplyVisibilitySimulator {
 
     private Map<Long, Long> demandCenterIdToSupply;
 
-    @PostConstruct
-    public void postConstruct() {
-        reset();
-    }
-
-    public SimulationOutput simulate(SimulatorInput simulatorInput, Long customerId) throws KalaariException {
+    public SimulationOutput simulate(SimulatorInput simulatorInput) {
         SimulationOutput simulationOutput = new SimulationOutput();
 
         List<Trip> trips = new ArrayList<>();
         for (SimulatorInput.SimulatorInputEntity input : simulatorInput.getData()) {
             Long fromDCId = input.getFromStation();
             Long toDCId = input.getToStation();
-            List<VehicleLocation> allocatedVehicles = matchmakingService.findVehicles(customerId);
-            if (allocatedVehicles.size() > 0) {
+            Long customerId = input.getCustomerId();
+            List<VehicleLocation> allocatedVehicles = new ArrayList<>();
+            try {
+                allocatedVehicles = matchmakingService.findVehicles(customerId);
+            } catch (Exception e) {
+                log.info("No vehicle found !");
+            }
+            if (allocatedVehicles.size() <= 0) {
 
                 // WE PREVENTED TRIP FROM HAPPENING
                 trips.add(new Trip(fromDCId, toDCId, false));
@@ -54,8 +55,17 @@ public class SupplyVisibilitySimulator {
 
                 // WE ALLOWED THE TRIP
                 trips.add(new Trip(fromDCId, toDCId, true));
-                demandCenterIdToSupply.put(fromDCId, demandCenterIdToSupply.get(fromDCId) - 1);
+                if (demandCenterIdToSupply.get(fromDCId) >= 1) {
+                    demandCenterIdToSupply.put(fromDCId, demandCenterIdToSupply.get(fromDCId) - 1);
+                }
                 demandCenterIdToSupply.put(toDCId, demandCenterIdToSupply.get(toDCId) + 1);
+
+                // UPDATE VEHICLE LOCATION OF 1 VEHICLE
+                DemandCenter demandCenter = demandCenterService.getDemandCenterById(toDCId);
+                VehicleLocation vehicle = allocatedVehicles.get(0);
+                vehicle.setLat(demandCenter.getLat());
+                vehicle.setLng(demandCenter.getLng());
+                ContextHolder.getBean(VehicleLocationRepository.class).save(vehicle);
             }
         }
 

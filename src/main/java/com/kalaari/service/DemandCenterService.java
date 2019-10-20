@@ -30,7 +30,7 @@ public class DemandCenterService {
     private Map<Long, DemandCenterPrediction> dcIdToDcp = new HashMap<>();
 
     public List<DemandCenterPrediction> getTop10DemandCenterPredictions() {
-        return demandCenterPredictionRepository.findTop10ByOrderByIdleWaitMins();
+        return demandCenterPredictionRepository.findTop1ByOrderByIdleWaitMins();
     }
 
     public List<DemandLanePrediction> getLanePredictions(Long fromDcId, Long toDcId) {

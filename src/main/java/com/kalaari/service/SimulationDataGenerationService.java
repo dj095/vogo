@@ -72,11 +72,11 @@ public class SimulationDataGenerationService {
             if (!dcIdToCountMap.containsKey(dcId))
                 continue;
             if (dcIdToCountMap.get(dcId) > 0) {
-                Integer toIndex = (randomIndex + (generateRandomNumber(numDc - 1))) % numDc;
+                Integer toIndex = (randomIndex + 1 + (generateRandomNumber(numDc - 1))) % numDc;
                 Long toDcId = dcIdList.get(toIndex);
 
                 Customer customer = new Customer(customerId.toString(), 3D, demandCenter.getLat(),
-                        demandCenter.getLng(), 0);
+                        demandCenter.getLng(), (int)(Math.random()*10));
                 customer = customerRepository.save(customer);
                 CustomerLanePreference customerLanePreference = new CustomerLanePreference(customer.getId(), dcId,
                         toDcId, 0);
@@ -106,7 +106,7 @@ public class SimulationDataGenerationService {
         demandCenterMap.put(1L, new DemandCenter("Whitefield", 12.977720, 77.741395, null, 200.0));
         demandCenterMap.put(2L, new DemandCenter("Marathahalli", 12.967636, 77.695034, null, 200.0));
         demandCenterMap.put(3L, new DemandCenter("Sarjapur", 12.859945, 77.791261, null, 200.0));
-        demandCenterMap.put(4L, new DemandCenter("Electronic City", 12.834977, 77.665627, null, 200.0));
+//        demandCenterMap.put(4L, new DemandCenter("Electronic City", 12.834977, 77.665627, null, 200.0));
         for (SimulationGeneratorRequest.SimulationGeneratorRequestEntity simulationGeneratorRequestEntity : simulationGeneratorRequest.getData()) {
             DemandCenter demandCenter = demandCenterMap.get(simulationGeneratorRequestEntity.getDcId());
             demandCenter.setNoOfVehicles(simulationGeneratorRequestEntity.getSupplyCount());
@@ -134,9 +134,9 @@ public class SimulationDataGenerationService {
 
     private void createDemandCentrePredictionData(DemandCenter demandCenter) {
         Map<String, Long> idleWaitMinsMap = new HashMap<>();
-        idleWaitMinsMap.put("Whitefield", 20L);
-        idleWaitMinsMap.put("Marathahalli", 30L);
-        idleWaitMinsMap.put("Sarjapur", 40L);
+        idleWaitMinsMap.put("Whitefield", 5L);
+        idleWaitMinsMap.put("Marathahalli", 1L);
+        idleWaitMinsMap.put("Sarjapur", 8L);
         idleWaitMinsMap.put("Electronic City", 60L);
         DemandCenterPrediction demandCenterPrediction = demandCenterPredictionRepository.findByDemandCenterIdOrderByIdleWaitMins(demandCenter.getId());
         if (demandCenterPrediction != null)
@@ -151,18 +151,18 @@ public class SimulationDataGenerationService {
         Map<String, Map<String, Long>> estimatedDemandMap = new HashMap<>();
 
         estimatedDemandMap.put("Whitefield", new HashMap<>());
-        estimatedDemandMap.get("Whitefield").put("Marathahalli", 2L);
-        estimatedDemandMap.get("Whitefield").put("Sarjapur", 3L);
+        estimatedDemandMap.get("Whitefield").put("Marathahalli", 8L);
+        estimatedDemandMap.get("Whitefield").put("Sarjapur", 2L);
         estimatedDemandMap.get("Whitefield").put("Electronic City", 4L);
 
         estimatedDemandMap.put("Marathahalli", new HashMap<>());
-        estimatedDemandMap.get("Marathahalli").put("Whitefield", 1L);
+        estimatedDemandMap.get("Marathahalli").put("Whitefield", 4L);
         estimatedDemandMap.get("Marathahalli").put("Sarjapur", 3L);
         estimatedDemandMap.get("Marathahalli").put("Electronic City", 4L);
 
         estimatedDemandMap.put("Sarjapur", new HashMap<>());
-        estimatedDemandMap.get("Sarjapur").put("Whitefield", 1L);
-        estimatedDemandMap.get("Sarjapur").put("Marathahalli", 2L);
+        estimatedDemandMap.get("Sarjapur").put("Whitefield", 2L);
+        estimatedDemandMap.get("Sarjapur").put("Marathahalli", 6L);
         estimatedDemandMap.get("Sarjapur").put("Electronic City", 4L);
 
         estimatedDemandMap.put("Electronic City", new HashMap<>());
@@ -186,9 +186,15 @@ public class SimulationDataGenerationService {
         }
     }
 
+    public void setRequestString(String json) {
+        requestString = json;
+    }
+
+    private String requestString;
+
     private SimulationGeneratorRequest mockRequest() {
 //        String requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 10,\"supply_count\": 12},{\"dc_id\": 2,\"count\": 5,\"supply_count\": 7},{\"dc_id\": 3,\"count\": 7,\"supply_count\": 10},{\"dc_id\": 4,\"count\": 3,\"supply_count\": 5}]}";
-        String requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 1,\"supply_count\": 12},{\"dc_id\": 2,\"count\": 1,\"supply_count\": 7},{\"dc_id\": 3,\"count\": 1,\"supply_count\": 10}]}";
+        requestString = "{\"data\": [{\"dc_id\": 1,\"count\": 10,\"supply_count\": 4},{\"dc_id\": 2,\"count\": 5,\"supply_count\": 2},{\"dc_id\": 3,\"count\": 4,\"supply_count\": 8}]}";
         try {
             return objectMapper.readValue(requestString, SimulationGeneratorRequest.class);
         } catch (Exception ex) {

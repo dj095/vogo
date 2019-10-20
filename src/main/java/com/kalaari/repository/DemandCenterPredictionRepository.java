@@ -10,7 +10,7 @@ import com.kalaari.entity.db.DemandCenterPrediction;
 @Repository
 public interface DemandCenterPredictionRepository extends CrudRepository<DemandCenterPrediction, Long> {
 
-    List<DemandCenterPrediction> findTop10ByOrderByIdleWaitMins();
+    List<DemandCenterPrediction> findTop1ByOrderByIdleWaitMins();
 
     List<DemandCenterPrediction> findAllByOrderByIdleWaitMins();
 

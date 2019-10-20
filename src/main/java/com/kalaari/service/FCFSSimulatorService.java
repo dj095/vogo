@@ -24,10 +24,14 @@ public class FCFSSimulatorService {
         for (SimulatorInput.SimulatorInputEntity simulatorInputEntity : simulatorInputEntityList) {
             outputMap.putIfAbsent(simulatorInputEntity.getFromStation(),
                     initialSupply.get(simulatorInputEntity.getFromStation()));
+            outputMap.putIfAbsent(simulatorInputEntity.getToStation(),
+                    initialSupply.get(simulatorInputEntity.getToStation()));
             if (outputMap.containsKey(simulatorInputEntity.getFromStation())
                     && outputMap.get(simulatorInputEntity.getFromStation()) > 0) {
                 outputMap.put(simulatorInputEntity.getFromStation(),
                         outputMap.get(simulatorInputEntity.getFromStation()) - 1);
+                outputMap.put(simulatorInputEntity.getToStation(),
+                        outputMap.get(simulatorInputEntity.getToStation()) + 1);
             }
         }
 

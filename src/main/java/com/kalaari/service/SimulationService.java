@@ -1,5 +1,13 @@
 package com.kalaari.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.kalaari.constant.EnumConstants;
 import com.kalaari.entity.common.DemandCenterState;
 import com.kalaari.entity.common.SimulationOutput;
@@ -9,13 +17,8 @@ import com.kalaari.exception.KalaariException;
 import com.kalaari.model.FCFSOutput;
 import com.kalaari.model.SimulatorInput;
 import com.kalaari.simulator.SupplyVisibilitySimulator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -36,22 +39,18 @@ public class SimulationService {
     @Autowired
     private SimulationDataGenerationService simulationDataGenerationService;
 
-    public Map<EnumConstants.SimulationType, SimulationOutput> simulate()
-            throws KalaariException {
+    public Map<EnumConstants.SimulationType, SimulationOutput> simulate() throws KalaariException {
 
         Map<EnumConstants.SimulationType, SimulationOutput> simulationOutputMap = new HashMap<>();
 
         // BUILD SIMULATOR INPUT
         SimulatorInput simulatorInput = simulationDataGenerationService.generateData();
 
-        SimulationOutput svSimulationOutput = null;
-        for (SimulatorInput.SimulatorInputEntity input : simulatorInput.getData()) {
-            Long customerId = input.getCustomerId();
+        supplyVisibilitySimulator.reset();
 
-            // SIMULATE USING SV SIMULATOR
-            svSimulationOutput = supplyVisibilitySimulator.simulate(simulatorInput, customerId);
-            supplyVisibilitySimulator.reset();
-        }
+        // SIMULATE USING SV SIMULATOR
+        SimulationOutput svSimulationOutput = supplyVisibilitySimulator.simulate(simulatorInput);
+        supplyVisibilitySimulator.reset();
 
         // SIMULATE USING FCFS SIMULATOR
         SimulationOutput fcfsSimilationOutput = buildSimulatorOutput(fcfsSimulatorService.runFCFSSimulator(
