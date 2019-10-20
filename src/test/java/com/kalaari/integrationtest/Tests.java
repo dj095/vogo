@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kalaari.KalaariApplication;
+import com.kalaari.exception.KalaariException;
+import com.kalaari.service.SimulationService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,8 +57,11 @@ public class Tests {
         }
     }
 
+    @Autowired
+    private SimulationService simulationService;
+
     @Test
-    public void test() {
-        System.out.println("success");
+    public void test() throws KalaariException {
+        log.info(simulationService.metricGenerator().toString());
     }
 }

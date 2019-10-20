@@ -39,6 +39,44 @@ public class SimulationService {
     @Autowired
     private SimulationDataGenerationService simulationDataGenerationService;
 
+    public Map<EnumConstants.SimulationType, List<Double>> metricGenerator() throws KalaariException {
+
+        Map<EnumConstants.SimulationType, List<Double>> output = new HashMap<>();
+
+        for (int i = 0; i < 100; i++) {
+            Map<EnumConstants.SimulationType, SimulationOutput> ithOutput = simulate();
+
+            SimulationOutput fcfsSimulationOutput = ithOutput.get(EnumConstants.SimulationType.FCFS);
+            SimulationOutput svSimulationOutput = ithOutput.get(EnumConstants.SimulationType.SV);
+
+            Double fcfsWait = getWAITForOutput(fcfsSimulationOutput);
+            Double svWait = getWAITForOutput(svSimulationOutput);
+
+            output.putIfAbsent(EnumConstants.SimulationType.FCFS, new ArrayList<>());
+            output.get(EnumConstants.SimulationType.FCFS).add(fcfsWait);
+
+            output.putIfAbsent(EnumConstants.SimulationType.SV, new ArrayList<>());
+            output.get(EnumConstants.SimulationType.SV).add(svWait);
+            log.info("i: {}", i);
+        }
+
+        return output;
+    }
+
+    private Double getWAITForOutput(SimulationOutput simulationOutput) {
+
+        Double wait = 0D;
+        int totalTrucks = 0;
+        for (DemandCenterState demandCenterState : simulationOutput.getDemandCenterStates()) {
+            wait += (double) demandCenterState.getIdleTimeMins() * (double) demandCenterState.getNoOfVehicles();
+            totalTrucks += demandCenterState.getNoOfVehicles();
+        }
+
+        wait = wait / totalTrucks;
+
+        return wait;
+    }
+
     public Map<EnumConstants.SimulationType, SimulationOutput> simulate() throws KalaariException {
 
         Map<EnumConstants.SimulationType, SimulationOutput> simulationOutputMap = new HashMap<>();
