@@ -27,6 +27,7 @@ public class InitialDataResponse {
     public static class InitialDataResponseEntity {
         Long demandCenterId;
         Long count;
+        Long idleWaitMins;
     }
 }
 
