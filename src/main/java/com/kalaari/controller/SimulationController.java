@@ -3,6 +3,7 @@ package com.kalaari.controller;
 import com.kalaari.constant.EnumConstants;
 import com.kalaari.entity.common.DemandCenterState;
 import com.kalaari.entity.common.SimulationOutput;
+import com.kalaari.entity.controller.InitialDataResponse;
 import com.kalaari.exception.KalaariException;
 import com.kalaari.service.SimulationDataGenerationService;
 import com.kalaari.service.SimulationService;
@@ -46,6 +47,13 @@ public class SimulationController {
         simulationDataGenerationService.populateInitialData();
         return "Success";
     }
+
+    @GetMapping(value = "/get_initial_data")
+    @ResponseBody
+    public InitialDataResponse getInitialData() {
+        return simulationDataGenerationService.getInitialData();
+    }
+
 
 
 }

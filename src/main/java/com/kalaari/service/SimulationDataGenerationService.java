@@ -1,6 +1,7 @@
 package com.kalaari.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kalaari.entity.controller.InitialDataResponse;
 import com.kalaari.entity.controller.SimulationGeneratorRequest;
 import com.kalaari.entity.db.Customer;
 import com.kalaari.entity.db.CustomerLanePreference;
@@ -19,8 +20,10 @@ import com.kalaari.repository.VehicleLocationRepository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,7 @@ public class SimulationDataGenerationService {
 
     public SimulatorInput generateData() {
         SimulationGeneratorRequest simulationGeneratorRequest = mockRequest();
+        createDemandCentreData(simulationGeneratorRequest);
         List<SimulatorInput.SimulatorInputEntity> simulatorInputEntityList = new ArrayList<>();
         Map<Long, Long> dcIdToCountMap = simulationGeneratorRequest.getData().stream()
                 .collect(Collectors.toMap(SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getDcId,
@@ -204,8 +208,14 @@ public class SimulationDataGenerationService {
         }
     }
 
-    private void clearData() {
-//        genericRepository.runQuery("drop table customer; drop table customer_lane_preference; drop table demand_center; drop table demand_center_prediction; drop table demand_lane_prediction; drop table vehicle_location;");
-//        log.debug("Cleared data");
+    public InitialDataResponse getInitialData() {
+        List<DemandCenter> demandCentres = demandCenterRepository.findAll();
+        InitialDataResponse initialDataResponse = new InitialDataResponse();
+        Set<InitialDataResponse.InitialDataResponseEntity> data = new HashSet<>();
+        for (DemandCenter demandCenter : demandCentres) {
+            data.add(new InitialDataResponse.InitialDataResponseEntity(demandCenter.getId(), demandCenter.getNoOfVehicles()));
+        }
+        initialDataResponse.setData(new ArrayList<>(data));
+        return initialDataResponse;
     }
 }

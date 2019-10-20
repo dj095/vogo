@@ -1,11 +1,11 @@
 package com.kalaari.repository;
 
+import com.kalaari.entity.db.DemandCenter;
+import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import com.kalaari.entity.db.DemandCenter;
 
 @Repository
 public interface DemandCenterRepository extends CrudRepository<DemandCenter, Long> {
@@ -17,4 +17,6 @@ public interface DemandCenterRepository extends CrudRepository<DemandCenter, Lon
     DemandCenter findById(Long id);
 
     DemandCenter findByName(String name);
+
+    List<DemandCenter> findAll();
 }
