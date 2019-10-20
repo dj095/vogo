@@ -214,7 +214,7 @@ public class SimulationDataGenerationService {
         Set<InitialDataResponse.InitialDataResponseEntity> data = new HashSet<>();
         for (DemandCenter demandCenter : demandCentres) {
             DemandCenterPrediction demandCenterPrediction = demandCenterPredictionRepository.findByDemandCenterIdOrderByIdleWaitMins(demandCenter.getId());
-            data.add(new InitialDataResponse.InitialDataResponseEntity(demandCenter.getId(), demandCenter.getNoOfVehicles(), demandCenterPrediction.getIdleWaitMins()));
+            data.add(new InitialDataResponse.InitialDataResponseEntity(demandCenter.getId(), demandCenter.getName(), demandCenter.getNoOfVehicles(), demandCenterPrediction.getIdleWaitMins()));
         }
         initialDataResponse.setData(new ArrayList<>(data));
         return initialDataResponse;

@@ -26,6 +26,7 @@ public class InitialDataResponse {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class InitialDataResponseEntity {
         Long demandCenterId;
+        String name;
         Long count;
         Long idleWaitMins;
     }
