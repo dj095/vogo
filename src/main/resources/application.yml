@@ -30,12 +30,12 @@ database:
   kalaari:
     datasource:
       driverClassName: org.postgresql.Driver
-      url: jdbc:postgresql://db-postgresql-alphax-do-user-6664467-0.db.ondigitalocean.com:25060/supply_shaper_db?sslmode=require
-      username: alphax
-      password: vvoj891xqj977gkl
-#      url: jdbc:postgresql://localhost:5432/vogo
-#      username: root
-#      password:
+#      url: jdbc:postgresql://db-postgresql-alphax-do-user-6664467-0.db.ondigitalocean.com:25060/supply_shaper_db?sslmode=require
+#      username: alphax
+#      password: vvoj891xqj977gkl
+      url: jdbc:postgresql://localhost:5432/vogo
+      username: root
+      password:
       dialect: org.hibernate.spatial.dialect.postgis.PostgisPG95Dialect
       validationQuery: SELECT 1
       testOnBorrow: true

@@ -20,65 +20,52 @@
 <script>
 
 
-    // map variable in global scope
     var map;
+    var count = 0;
 
-    //Initialise la map
     function initMap() {
 
-//text overlays
         function TxtOverlay(pos, txt, cls, map) {
 
-            // Now initialize all properties.
+
             this.pos = pos;
             this.txt_ = txt;
             this.cls_ = cls;
             this.map_ = map;
 
-            // We define a property to hold the image's
-            // div. We'll actually create this div
-            // upon receipt of the add() method so we'll
-            // leave it null for now.
+
             this.div_ = null;
 
-            // Explicitly call setMap() on this overlay
+
             this.setMap(map);
         }
 
         TxtOverlay.prototype = new google.maps.OverlayView();
 
-
         TxtOverlay.prototype.onAdd = function () {
 
-            // Note: an overlay's receipt of onAdd() indicates that
-            // the map's panes are now available for attaching
-            // the overlay to the map via the DOM.
 
-            // Create the DIV and set some basic attributes.
-            var div = document.createElement('DIV');
+            var div = document.createElement('DIV' + count);
+            console.log('DIV' + count)
+            count = count + 1;
             div.className = this.cls_;
 
             div.innerHTML = this.txt_;
 
-            // Set the overlay's div_ property to this DIV
+
             this.div_ = div;
             var overlayProjection = this.getProjection();
             var position = overlayProjection.fromLatLngToDivPixel(this.pos);
             div.style.left = position.x + 'px';
             div.style.top = position.y + 'px';
-            // We add an overlay to a map via one of the map's panes.
 
-            var panes = this.getPanes();
-            panes.floatPane.appendChild(div);
         }
         TxtOverlay.prototype.draw = function () {
 
 
             var overlayProjection = this.getProjection();
 
-            // Retrieve the southwest and northeast coordinates of this overlay
-            // in latlngs and convert them to pixels coordinates.
-            // We'll use these coordinates to resize the DIV.
+
             var position = overlayProjection.fromLatLngToDivPixel(this.pos);
 
 
@@ -88,7 +75,6 @@
 
 
         }
-        //Optional: helper methods for removing and toggling the text overlay.
         TxtOverlay.prototype.onRemove = function () {
             this.div_.parentNode.removeChild(this.div_);
             this.div_ = null;
@@ -123,23 +109,24 @@
             }
         }
 
-        // initialize the map variable
+
         map = new google.maps.Map(document.getElementById('map'), {
             scrollwheel: true,
             mapTypeControl: false,
             center: {
-                lat: MY_LAT,
-                lng: MY_LNG
+                lat: MY_LAT1,
+                lng: MY_LNG1
             },
             zoom: 13,
             streetViewControl: false,
             zoomControl: true
         });
 
-        var latlng = new google.maps.LatLng(MY_LAT1, MY_LNG1);
-        customTxt = "MY_TEXT1"
-        txt = new TxtOverlay(latlng, customTxt, "customBox", map)
-        var antennasCircle = new google.maps.Circle({
+        var latlng1 = new google.maps.LatLng(MY_LAT1, MY_LNG1);
+        var customTxt1 = "MY_TEXT1"
+        console.log(latlng1)
+        var txt1 = new TxtOverlay(latlng1, customTxt1, "customBox", map)
+        var antennasCircle1 = new google.maps.Circle({
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
             strokeWeight: 2,
@@ -152,12 +139,13 @@
             },
             radius: MY_RADIUS1
         });
-        map.fitBounds(antennasCircle.getBounds());
+        // map.fitBounds(antennasCircle1.getBounds());
 
-        latlng = new google.maps.LatLng(MY_LAT2, MY_LNG2);
-        customTxt = "MY_TEXT2"
-        txt = new TxtOverlay(latlng, customTxt, "customBox", map)
-        antennasCircle = new google.maps.Circle({
+        var latlng2 = new google.maps.LatLng(MY_LAT2, MY_LNG2);
+        var customTxt2 = "MY_TEXT2"
+        console.log(latlng2)
+        var txt2 = new TxtOverlay(latlng2, customTxt2, "customBox", map)
+        var antennasCircle2 = new google.maps.Circle({
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
             strokeWeight: 2,
@@ -170,12 +158,13 @@
             },
             radius: MY_RADIUS2
         });
-        map.fitBounds(antennasCircle.getBounds());
+        // map.fitBounds(antennasCircle2.getBounds());
 
-        latlng = new google.maps.LatLng(MY_LAT3, MY_LNG3);
-        customTxt = "MY_TEXT3"
-        txt = new TxtOverlay(latlng, customTxt, "customBox", map)
-        antennasCircle = new google.maps.Circle({
+        var latlng3 = new google.maps.LatLng(MY_LAT3, MY_LNG3);
+        var customTxt3 = "MY_TEXT3"
+        console.log(latlng3)
+        var txt3 = new TxtOverlay(latlng3, customTxt3, "customBox", map)
+        var antennasCircle3 = new google.maps.Circle({
             strokeColor: "#FF0000",
             strokeOpacity: 0.8,
             strokeWeight: 2,
@@ -188,8 +177,9 @@
             },
             radius: MY_RADIUS3
         });
-        map.fitBounds(antennasCircle.getBounds());
+        // map.fitBounds(antennasCircle3.getBounds());
     }
+
 </script>
 
 <input id="clickMe" type="button" value="clickme" onclick="drawOnclick();"/>

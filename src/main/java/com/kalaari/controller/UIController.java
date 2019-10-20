@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,21 +47,25 @@ public class UIController {
     @ResponseBody
     public String getMap1() throws KalaariException, IOException {
 
-        String path = "src/main/resources/Map1.html";
+        String path = "src/main/resources/Map.html";
         String ans = readFile(path);
         InitialDataResponse res = simulationDataGenerationService.getInitialData();
+        if (CollectionUtils.isEmpty(res.getData())) {
+            simulationDataGenerationService.populateInitialData();
+            res = simulationDataGenerationService.getInitialData();
+        }
         Map<String, InitialDataResponse.InitialDataResponseEntity> nameToData = new HashMap<>();
         for (InitialDataResponse.InitialDataResponseEntity datum : res.getData()) {
             nameToData.put(datum.getName(), datum);
         }
-        replaceData(ans, nameToData);
+        ans = replaceData(ans, nameToData);
         map1Html = ans;
 
         Map<EnumConstants.SimulationType, SimulationOutput> data = simulationService.simulate();
         SimulationOutput so1 = data.get(EnumConstants.SimulationType.FCFS);
         SimulationOutput so2 = data.get(EnumConstants.SimulationType.SV);
 
-        path = "src/main/resources/Map2.html";
+        path = "src/main/resources/Map.html";
         ans = readFile(path);
         nameToData = new HashMap<>();
         for (DemandCenterState dcs : so1.getDemandCenterStates()) {
@@ -68,10 +73,10 @@ public class UIController {
             nameToData.put(name, new InitialDataResponse.InitialDataResponseEntity(dcs.getDcId(), name,
                     dcs.getNoOfVehicles(), dcs.getIdleTimeMins()));
         }
-        replaceData(ans, nameToData);
+        ans = replaceData(ans, nameToData);
         map2Html = ans;
 
-        path = "src/main/resources/Map3.html";
+        path = "src/main/resources/Map.html";
         ans = readFile(path);
         nameToData = new HashMap<>();
         for (DemandCenterState dcs : so2.getDemandCenterStates()) {
@@ -79,31 +84,31 @@ public class UIController {
             nameToData.put(name, new InitialDataResponse.InitialDataResponseEntity(dcs.getDcId(), name,
                     dcs.getNoOfVehicles(), dcs.getIdleTimeMins()));
         }
-        replaceData(ans, nameToData);
+        ans = replaceData(ans, nameToData);
         map3Html = ans;
 
         return map1Html;
     }
 
-    private void replaceData(String ans, Map<String, InitialDataResponse.InitialDataResponseEntity> nameToData) {
-        replaceData(nameToData.get("Whitefield").getIdleWaitMins(), nameToData.get("Whitefield").getCount(),
+    private String replaceData(String ans, Map<String, InitialDataResponse.InitialDataResponseEntity> nameToData) {
+        return replaceData(nameToData.get("Whitefield").getIdleWaitMins(), nameToData.get("Whitefield").getCount(),
                 nameToData.get("Marathahalli").getIdleWaitMins(), nameToData.get("Marathahalli").getCount(),
                 nameToData.get("Sarjapur").getIdleWaitMins(), nameToData.get("Sarjapur").getCount(), ans);
     }
 
-    private void replaceData(Long itm1, Long itm2, Long itm3, Long c1, Long c2, Long c3, String ans) {
-        ans.replaceAll("MY_TEXT1", "<h3>Whitefield<br>" + c1 + "<br>" + itm1 + "</h3>");
-        ans.replaceAll("MY_LAT1", 12.97772 + "");
-        ans.replaceAll("MY_LNG1", 77.741395 + "");
-        ans.replaceAll("MY_RADIUS1", 200 + "");
-        ans.replaceAll("MY_TEXT2", "<h3>Marathahalli<br>" + c2 + "<br>" + itm2 + "</h3>");
-        ans.replaceAll("MY_LAT2", 12.967636 + "");
-        ans.replaceAll("MY_LNG2", 77.695034 + "");
-        ans.replaceAll("MY_RADIUS2", 200 + "");
-        ans.replaceAll("MY_TEXT3", "<h3>Sarjapur<br>" + c3 + "<br>" + itm3 + "</h3>");
-        ans.replaceAll("MY_LAT3", 12.859945 + "");
-        ans.replaceAll("MY_LNG3", 77.791261 + "");
-        ans.replaceAll("MY_RADIUS3", 200 + "");
+    private String replaceData(Long itm1, Long itm2, Long itm3, Long c1, Long c2, Long c3, String ans) {
+        ans = ans.replaceAll("MY_TEXT1", "<h3>Whitefield<br>" + c1 + "<br>" + itm1 + "</h3>");
+        ans = ans.replaceAll("MY_LAT1", 12.97772 + "");
+        ans = ans.replaceAll("MY_LNG1", 77.741395 + "");
+        ans = ans.replaceAll("MY_RADIUS1", 200 + "");
+        ans = ans.replaceAll("MY_TEXT2", "<h3>Marathahalli<br>" + c2 + "<br>" + itm2 + "</h3>");
+        ans = ans.replaceAll("MY_LAT2", 12.967636 + "");
+        ans = ans.replaceAll("MY_LNG2", 77.695034 + "");
+        ans = ans.replaceAll("MY_RADIUS2", 200 + "");
+        ans = ans.replaceAll("MY_TEXT3", "<h3>Sarjapur<br>" + c3 + "<br>" + itm3 + "</h3>");
+        ans = ans.replaceAll("MY_LAT3", 12.859945 + "");
+        ans = ans.replaceAll("MY_LNG3", 77.791261 + "");
+        return ans.replaceAll("MY_RADIUS3", 200 + "");
     }
 
     private String readFile(String path) throws IOException {
@@ -112,7 +117,7 @@ public class UIController {
         String ans = "";
         String st;
         while ((st = br.readLine()) != null)
-            ans += st;
+            ans += st + "\n";
         return ans;
     }
 
