@@ -55,9 +55,7 @@ public class SimulationDataGenerationService {
     private GenericRepository genericRepository;
 
     public SimulatorInput generateData() {
-        clearData();
         SimulationGeneratorRequest simulationGeneratorRequest = mockRequest();
-        createDemandCentreData(simulationGeneratorRequest);
         List<SimulatorInput.SimulatorInputEntity> simulatorInputEntityList = new ArrayList<>();
         Map<Long, Long> dcIdToCountMap = simulationGeneratorRequest.getData().stream()
                 .collect(Collectors.toMap(SimulationGeneratorRequest.SimulationGeneratorRequestEntity::getDcId,
@@ -100,6 +98,10 @@ public class SimulationDataGenerationService {
         return (int) (Math.random() * maxval);
     }
 
+    public void populateInitialData() {
+        SimulationGeneratorRequest simulationGeneratorRequest = mockRequest();
+        createDemandCentreData(simulationGeneratorRequest);
+    }
     private void createDemandCentreData(SimulationGeneratorRequest simulationGeneratorRequest) {
         List<DemandCenter> demandCenterList = new ArrayList<>();
         Map<Long, DemandCenter> demandCenterMap = new HashMap<>();
